@@ -1,6 +1,11 @@
 # Project specific
-*.png
 *.jpg
+*.jpeg
+*.png
+*.gif
+*.webm
+*.mp4
+*.avi
 user_credentials.json
 
 # Byte-compiled / optimized / DLL files
