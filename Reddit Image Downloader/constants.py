@@ -1,0 +1,1 @@
+DEFAULT_CREDENTIALS_FILEPATH = "user_credentials.json"
