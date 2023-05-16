@@ -8,11 +8,14 @@ from constants import DEFAULT_CREDENTIALS_FILEPATH
 class RedditImageDownload:
     def __init__(
             self,
-            image_count,
+            user_name,
+            image_count = 10,
             credentials_filepath = DEFAULT_CREDENTIALS_FILEPATH,
     ):
+        self.user_name = user_name
         self.image_count = image_count
         self.reddit = self._get_reddit_from_filepath(credentials_filepath)
+        self.user = self.reddit.redditor(self.user_name)
 
     def _get_reddit_from_filepath(self, credentials_filepath):
         credentials: dict
@@ -27,16 +30,25 @@ class RedditImageDownload:
             username=credentials["username"],
         )
 
-    def api_test(self, name = "kacperekk6dev"):
-        user = self.reddit.redditor(name)
-        print(user.name)
-        print(user.subreddit)
+    def get_posts_from_profile(self, subreddit_posts_count = 10):
+        #profile is attribute display_name of class UserSubreddit, its a name of user profile/wall/user's subreddit
+        profile = self.user.subreddit.display_name
+        subreddit = self.reddit.subreddit(profile)
+        post_info = [
+            (subm.id,
+             str(subm.author),
+             str(subm.selftext),
+             str(subm.title),
+             int(subm.score),
+             subm.subreddit)
+            for subm in subreddit.top(limit=subreddit_posts_count)
+        ]
+        df = pd.DataFrame(post_info, columns=["id", "author", "text", "title", "score", "subreddit"])
+        return df
 
-        return 0
-
-
-
-
+n1 = 'kacperekk6dev'
 #test_object
-rid = RedditImageDownload(10)
-test = rid.api_test()
+rid = RedditImageDownload(n1)
+df = rid.get_posts_from_profile()
+
+print(df["text"])
