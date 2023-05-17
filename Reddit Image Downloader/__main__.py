@@ -1,7 +1,12 @@
+import requests
+
 from image_downloader_module import RedditImageDownload
 
-s = 'abcd.jpg'
+url = 'https://mxj.myanimelist.net/img/projects/readthismanga/2023/index/img-chara.png'
 
-x = s[-3:]
+req = requests.get(url)
 
-print(x)
+name = 'aaa'
+format = 'png'
+with open(f'{name}.{format}', "wb") as f:
+    f.write(req.content)
