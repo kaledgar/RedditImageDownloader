@@ -4,18 +4,16 @@ import praw
 import requests
 import os
 from prawcore.exceptions import Forbidden
-from constants import DEFAULT_CREDENTIALS_FILEPATH
+from constants import *
 
 
 class RedditImageDownload:
     def __init__(
             self,
             user_name,
-            image_count = 10,
             credentials_filepath = DEFAULT_CREDENTIALS_FILEPATH,
     ):
         self.user_name = user_name
-        self.image_count = image_count
         self.reddit = self._get_reddit_from_filepath(credentials_filepath)
         self.user = self.reddit.redditor(self.user_name)
 
@@ -40,12 +38,16 @@ class RedditImageDownload:
         else:
             print("Folder %s already exists" % path)
 
-    def get_posts(self, posts_count = 10):
-        user_submissions = [subm.url for subm in self.user.submissions.top(time_filter = "all")]
+    def _get_posts(self, posts_count = POST_COUNT):
+        user_submissions = [
+            (subm.id,
+             subm.url,
+             subm.created_utc)
+            for subm in self.user.submissions.new(limit = None)]
+        df = pd.DataFrame(user_submissions, columns=["id", "url", "created_utc"])
+        return df
 
-        return user_submissions
-
-    def get_posts_from_profile(self, posts_count = 10):
+    def _get_posts_from_profile(self, posts_count = POST_COUNT):
         #profile is attribute display_name of class UserSubreddit, its a name of user profile/wall/user's subreddit
         profile = self.user.subreddit.display_name
         subreddit = self.reddit.subreddit(profile)
@@ -65,20 +67,20 @@ class RedditImageDownload:
         return df
 
     def download_from_url(self, url, name, format):
+        ## remember to check if self.user_name directory exists
         rqst = requests.get(url)
-        with open(f'{name}.{format}', "wb") as file:
+        with open(f'{self.user_name}/{name}.{format}', "wb") as file:
             file.write(rqst.content)
 
-    def test(self):
+    def get_images(self):
         self._make_directory()
+        df = self._get_posts()
+        for i, url in enumerate(df['url']):
+            print(url)
+            self.download_from_url(url, i, 'jpg')
+
+        return df
+
 
 
 name = 'kacperekk6dev'
-
-
-#test_object
-rid = RedditImageDownload(name)
-df = rid.get_posts_from_profile()
-df1 = rid.get_posts()
-
-print(df1)

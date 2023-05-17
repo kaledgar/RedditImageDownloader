@@ -1,1 +1,2 @@
 DEFAULT_CREDENTIALS_FILEPATH = "user_credentials.json"
+POST_COUNT = 10
