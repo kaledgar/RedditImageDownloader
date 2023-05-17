@@ -38,17 +38,18 @@ class RedditImageDownload:
             (subm.id,
              str(subm.author),
              str(subm.selftext),
+             str(subm.url),
              str(subm.title),
              int(subm.score),
              subm.subreddit)
             for subm in subreddit.top(limit=subreddit_posts_count)
         ]
-        df = pd.DataFrame(post_info, columns=["id", "author", "text", "title", "score", "subreddit"])
+        df = pd.DataFrame(post_info, columns=["id", "author", "text", "url", "title", "score", "subreddit"])
         return df
 
-n1 = 'kacperekk6dev'
+n1 = 'aroushthekween'
 #test_object
 rid = RedditImageDownload(n1)
 df = rid.get_posts_from_profile()
 
-print(df["text"])
+print(df)

@@ -1,3 +1,7 @@
 from image_downloader_module import RedditImageDownload
 
-print(1)
+s = 'abcd.jpg'
+
+x = s[-3:]
+
+print(x)
