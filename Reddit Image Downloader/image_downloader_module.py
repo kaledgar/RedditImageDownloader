@@ -3,9 +3,11 @@ import json
 import praw
 import requests
 import os
+import logging
 from prawcore.exceptions import Forbidden
 from constants import *
 
+logger = logging.getLogger(__name__)
 
 class RedditImageDownload:
     def __init__(self, user_name, credentials_filepath=DEFAULT_CREDENTIALS_FILEPATH):
@@ -38,6 +40,7 @@ class RedditImageDownload:
             for subm in self.user.submissions.new(limit=None)
         ]
         df = pd.DataFrame(user_submissions, columns=["id", "url", "created_utc"])
+        logger.debug(f'{self.user_name} posts: {df}')
         return df
 
     def _get_posts_from_profile(self, posts_count=POST_COUNT):
@@ -80,10 +83,12 @@ class RedditImageDownload:
         #check if directory exists:
         if os.path.isdir(f'{self.user_name}') == False:
             self._make_directory()
+        else:
+            logger.info(f'Directory /{self.user_name} already exists')
 
         df = self._get_posts()
         for i, url in enumerate(df['url']):
-            print(url)
+            #print(url)
             self.download_from_url(url, i, 'jpg')
 
         return df
