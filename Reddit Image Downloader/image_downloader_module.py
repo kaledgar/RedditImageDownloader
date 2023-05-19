@@ -4,7 +4,6 @@ import praw
 import requests
 import os
 import logging
-import urllib.request
 from prawcore.exceptions import Forbidden
 from constants import *
 
@@ -82,13 +81,11 @@ class RedditImageDownload:
             file.write(rqst.content)
 
     def get_images(self):
-        '''
         #check if directory exists:
         if os.path.isdir(f'{self.user_name}') == False:
             self._make_directory()
         else:
             logger.info(f'Directory /{self.user_name} already exists')
-        '''
         self._make_directory()
         df = self._get_posts()
         for i, url in enumerate(df['url']):
