@@ -50,10 +50,8 @@ class RedditImageDownload:
             (
                 subm.id,
                 str(subm.author),
-                str(subm.selftext),
                 str(subm.url),
                 str(subm.title),
-                int(subm.score),
                 int(subm.created_utc),
                 subm.subreddit,
             )
@@ -89,7 +87,8 @@ class RedditImageDownload:
         self._make_directory()
         df = self._get_posts()
         for i, url in enumerate(df['url']):
-            filepath = f'{self.user_name}/{i}'
+            df_id_i = df['id'][i]
+            filepath = f'{self.user_name}/{df_id_i}'
             self.download_from_url(url, filepath, 'jpg')
 
         return df
