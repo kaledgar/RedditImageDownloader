@@ -6,7 +6,7 @@ import os
 import logging
 from datetime import datetime
 ## add error handling!!!!!!!
-from prawcore.exceptions import Forbidden
+from prawcore.exceptions import Forbidden, NoneType
 from constants import *
 
 logger = logging.getLogger(__name__)
@@ -36,10 +36,10 @@ class RedditImageDownload:
         else:
             print(f"Folder {path} already exists")
 
-    def _get_posts(self, posts_count=POST_COUNT):
+    def _get_posts(self, posts_count=None):
         user_submissions = [
             (subm.id, subm.url, subm.created_utc)
-            for subm in self.user.submissions.new(limit=None)
+            for subm in self.user.submissions.new(limit=posts_count)
         ]
         df = pd.DataFrame(user_submissions, columns=["id", "url", "created_utc"])
         logger.debug(f'{self.user_name} posts: {df}')
@@ -63,22 +63,13 @@ class RedditImageDownload:
             post_info,
             columns=[
                 "id",
-                "author",
-                "text",
                 "url",
                 "title",
-                "score",
                 "created_utc",
                 "subreddit",
             ],
         )
         return df
-
-    def download_from_url(self, url, name, format):
-        rqst = requests.get(url)
-
-        with open(f'{name}.{format}', "wb") as file:
-            file.write(rqst.content)
 
     def classify_urls(self, df):
         df['type'] = df['url'].apply(
@@ -88,39 +79,55 @@ class RedditImageDownload:
             else 'unknown')
         return df
 
-    def get_images(self, name_by = 'id'):
-        #check if directory exists:
-        if os.path.isdir(f'{self.user_name}') == False:
-            self._make_directory()
-        else:
-            logger.info(f'Directory /{self.user_name} already exists')
-        self._make_directory()
-        df = self._get_posts()
+    def download_image_from_url(self, url, name, format):
+        rqst = requests.get(url)
 
-        #loop through urls dataframe and download images to dir
-        for i, url in enumerate(df['url']):
-            if name_by == 'id':
-                name_i = df['id'][i]
-            elif name_by == 'created_utc':
-                #unix time
-                #name_i = df['created_utc'][i]
-                #YYYY-MM-DD--hh-mm-ss
-                name_i = datetime.utcfromtimestamp(df['created_utc'][i]).strftime('%Y-%m-%d--%H-%M-%S')
+        with open(f'{name}.{format}', "wb") as file:
+            file.write(rqst.content)
 
-            filepath = f'{self.user_name}/{name_i}'
-            self.download_from_url(url, filepath, 'jpg')
-
-        return df
-
-    def test_gallery(self, gallery_id):
+    def download_image_from_gallery(self, gallery_id, filepath, format):
         post = self.reddit.submission(id=gallery_id)
-        gallery = []
+        url_gallery_list = []
         for i in post.media_metadata.items():
             url = i[1]['p'][0]['u']
             url = url.split("?")[0].replace("preview", "i")
-            gallery.append(url)
+            url_gallery_list.append(url)
 
-        return gallery
+        for i, url in enumerate(url_gallery_list):
+            rqst = requests.get(url)
+
+            with open(f'{filepath}_{i}.{format}', "wb") as file:
+                file.write(rqst.content)
+
+        return url_gallery_list
+
+
+    def get_images(self, name_by='id'):
+        # create direcotry or check if directory exists:
+        if os.path.isdir(f'{self.user_name}') == False:
+            self._make_directory()
+            logger.info(f'Created directory /{self.user_name}')
+        else:
+            logger.error(f'Directory /{self.user_name} already exists')
+        self._make_directory()
+        df = self._get_posts()
+        df_classified = self.classify_urls(df)
+        # loop through urls dataframe and download images to dir
+
+        for i, url in enumerate(df_classified['url']):
+            if name_by == 'id':
+                name_i = df_classified['id'][i]
+            elif name_by == 'created_utc':
+                name_i = datetime.utcfromtimestamp(df_classified['created_utc'][i]).strftime('%Y-%m-%d--%H-%M-%S')
+
+            if df_classified['type'][i] == 'image':
+                filepath = f'{self.user_name}/{name_i}'
+                self.download_image_from_url(url, filepath, 'jpg')
+            elif df_classified['type'][i] == 'gallery':
+                filepath = f'{self.user_name}/{name_i}'
+                self.download_image_from_gallery(df_classified['id'][i], filepath, 'jpg')
+            elif df_classified['type'][i] == 'unknown':
+                pass
 
 '''rid = RedditImageDownload('vegetaaaa88')
 r = rid.test_gallery(gallery_id = '13bmz4e')
