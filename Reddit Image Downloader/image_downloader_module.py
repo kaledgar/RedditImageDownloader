@@ -4,6 +4,7 @@ import praw
 import requests
 import os
 import logging
+from datetime import datetime
 ## add error handling!!!!!!!
 from prawcore.exceptions import Forbidden
 from constants import *
@@ -79,6 +80,14 @@ class RedditImageDownload:
         with open(f'{name}.{format}', "wb") as file:
             file.write(rqst.content)
 
+    def classify_urls(self, df):
+        df['type'] = df['url'].apply(
+            lambda x: 'image'
+            if 'i.redd.it' in x
+            else 'gallery' if 'reddit.com/gallery' in x
+            else 'unknown')
+        return df
+
     def get_images(self, name_by = 'id'):
         #check if directory exists:
         if os.path.isdir(f'{self.user_name}') == False:
@@ -87,14 +96,33 @@ class RedditImageDownload:
             logger.info(f'Directory /{self.user_name} already exists')
         self._make_directory()
         df = self._get_posts()
+
+        #loop through urls dataframe and download images to dir
         for i, url in enumerate(df['url']):
             if name_by == 'id':
                 name_i = df['id'][i]
             elif name_by == 'created_utc':
-                name_i = df['created_utc'][i]
+                #unix time
+                #name_i = df['created_utc'][i]
+                #YYYY-MM-DD--hh-mm-ss
+                name_i = datetime.utcfromtimestamp(df['created_utc'][i]).strftime('%Y-%m-%d--%H-%M-%S')
 
             filepath = f'{self.user_name}/{name_i}'
             self.download_from_url(url, filepath, 'jpg')
 
         return df
 
+    def test_gallery(self, gallery_id):
+        post = self.reddit.submission(id=gallery_id)
+        gallery = []
+        for i in post.media_metadata.items():
+            url = i[1]['p'][0]['u']
+            url = url.split("?")[0].replace("preview", "i")
+            gallery.append(url)
+
+        return gallery
+
+'''rid = RedditImageDownload('vegetaaaa88')
+r = rid.test_gallery(gallery_id = '13bmz4e')
+
+print(r)'''
