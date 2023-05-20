@@ -4,6 +4,7 @@ import praw
 import requests
 import os
 import logging
+## add error handling!!!!!!!
 from prawcore.exceptions import Forbidden
 from constants import *
 
@@ -78,7 +79,7 @@ class RedditImageDownload:
         with open(f'{name}.{format}', "wb") as file:
             file.write(rqst.content)
 
-    def get_images(self):
+    def get_images(self, name_by = 'id'):
         #check if directory exists:
         if os.path.isdir(f'{self.user_name}') == False:
             self._make_directory()
@@ -87,8 +88,12 @@ class RedditImageDownload:
         self._make_directory()
         df = self._get_posts()
         for i, url in enumerate(df['url']):
-            df_id_i = df['id'][i]
-            filepath = f'{self.user_name}/{df_id_i}'
+            if name_by == 'id':
+                name_i = df['id'][i]
+            elif name_by == 'created_utc':
+                name_i = df['created_utc'][i]
+
+            filepath = f'{self.user_name}/{name_i}'
             self.download_from_url(url, filepath, 'jpg')
 
         return df
