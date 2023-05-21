@@ -3,13 +3,12 @@ import json
 import praw
 import requests
 import os
-import logging
 from datetime import datetime
 ## add error handling!!!!!!!
 from prawcore.exceptions import Forbidden
+from logger_config import logger
 from constants import *
 
-logger = logging.getLogger(__name__)
 
 class RedditImageDownload:
     def __init__(self, user_name, credentials_filepath=DEFAULT_CREDENTIALS_FILEPATH):
@@ -39,8 +38,10 @@ class RedditImageDownload:
         post = self.reddit.submission(id=gallery_id)
         if post.author is None:
             logger.error(f'Submission with ID {gallery_id} was deleted.')
+            return None
         elif not post.is_robot_indexable:
             logger.error(f'Submission with ID {gallery_id} was removed.')
+            return None
         else:
             logger.info(f'Submission with ID {gallery_id} is UP.')
             return post
@@ -60,7 +61,6 @@ class RedditImageDownload:
         post_info = [
             (
                 subm.id,
-                str(subm.author),
                 str(subm.url),
                 str(subm.title),
                 int(subm.created_utc),
@@ -95,7 +95,9 @@ class RedditImageDownload:
 
     def download_image_from_gallery(self, gallery_id, filepath, format):
         post = self._test_none_type_submission(gallery_id)
-        if post is not None:
+        if post is None:
+            pass
+        else:
             url_gallery_list = [i[1]['p'][0]['u'].split("?")[0].replace("preview", "i") for i in
                                 post.media_metadata.items()]
 
@@ -106,17 +108,13 @@ class RedditImageDownload:
                         file.write(rqst.content)
 
             return url_gallery_list
-        else:
-            pass
 
     def get_images(self, name_by='id'):
-        # create direcotry or check if directory exists:
-        if os.path.isdir(f'{self.user_name}') == False:
+        if not os.path.isdir(f'{self.user_name}'):
             self._make_directory()
             logger.info(f'Created directory /{self.user_name}')
         else:
             logger.error(f'Directory /{self.user_name} already exists')
-        self._make_directory()
 
         df = self._get_posts()
         df_classified = self.classify_urls(df)
