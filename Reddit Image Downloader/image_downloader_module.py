@@ -6,7 +6,7 @@ import os
 import logging
 from datetime import datetime
 ## add error handling!!!!!!!
-from prawcore.exceptions import Forbidden, NoneType
+from prawcore.exceptions import Forbidden
 from constants import *
 
 logger = logging.getLogger(__name__)
@@ -32,9 +32,18 @@ class RedditImageDownload:
         path = f'./{self.user_name}'
         if not os.path.exists(path):
             os.mkdir(path)
-            print(f"Folder {path} created!")
         else:
-            print(f"Folder {path} already exists")
+            pass
+
+    def _test_none_type_submission(self, gallery_id):
+        post = self.reddit.submission(id=gallery_id)
+        if post.author is None:
+            logger.error(f'Submission with ID {gallery_id} was deleted.')
+        elif not post.is_robot_indexable:
+            logger.error(f'Submission with ID {gallery_id} was removed.')
+        else:
+            logger.info(f'Submission with ID {gallery_id} is UP.')
+            return post
 
     def _get_posts(self, posts_count=None):
         user_submissions = [
@@ -73,8 +82,7 @@ class RedditImageDownload:
 
     def classify_urls(self, df):
         df['type'] = df['url'].apply(
-            lambda x: 'image'
-            if 'i.redd.it' in x
+            lambda x: 'image'if 'i.redd.it' in x
             else 'gallery' if 'reddit.com/gallery' in x
             else 'unknown')
         return df
@@ -86,21 +94,20 @@ class RedditImageDownload:
             file.write(rqst.content)
 
     def download_image_from_gallery(self, gallery_id, filepath, format):
-        post = self.reddit.submission(id=gallery_id)
-        url_gallery_list = []
-        for i in post.media_metadata.items():
-            url = i[1]['p'][0]['u']
-            url = url.split("?")[0].replace("preview", "i")
-            url_gallery_list.append(url)
+        post = self._test_none_type_submission(gallery_id)
+        if post is not None:
+            url_gallery_list = [i[1]['p'][0]['u'].split("?")[0].replace("preview", "i") for i in
+                                post.media_metadata.items()]
 
-        for i, url in enumerate(url_gallery_list):
-            rqst = requests.get(url)
+            for i, url in enumerate(url_gallery_list):
+                rqst = requests.get(url)
 
-            with open(f'{filepath}_{i}.{format}', "wb") as file:
-                file.write(rqst.content)
+                with open(f'{filepath}_{i}.{format}', "wb") as file:
+                        file.write(rqst.content)
 
-        return url_gallery_list
-
+            return url_gallery_list
+        else:
+            pass
 
     def get_images(self, name_by='id'):
         # create direcotry or check if directory exists:
@@ -110,9 +117,9 @@ class RedditImageDownload:
         else:
             logger.error(f'Directory /{self.user_name} already exists')
         self._make_directory()
+
         df = self._get_posts()
         df_classified = self.classify_urls(df)
-        # loop through urls dataframe and download images to dir
 
         for i, url in enumerate(df_classified['url']):
             if name_by == 'id':
@@ -120,16 +127,10 @@ class RedditImageDownload:
             elif name_by == 'created_utc':
                 name_i = datetime.utcfromtimestamp(df_classified['created_utc'][i]).strftime('%Y-%m-%d--%H-%M-%S')
 
+            filepath = f'{self.user_name}/{name_i}'
             if df_classified['type'][i] == 'image':
-                filepath = f'{self.user_name}/{name_i}'
                 self.download_image_from_url(url, filepath, 'jpg')
             elif df_classified['type'][i] == 'gallery':
-                filepath = f'{self.user_name}/{name_i}'
                 self.download_image_from_gallery(df_classified['id'][i], filepath, 'jpg')
             elif df_classified['type'][i] == 'unknown':
                 pass
-
-'''rid = RedditImageDownload('vegetaaaa88')
-r = rid.test_gallery(gallery_id = '13bmz4e')
-
-print(r)'''
