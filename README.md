@@ -34,10 +34,15 @@ The RedditImageDownload class provides the following methods:
 
 Other internal methods: These methods, marked with a leading underscore (_), handle various internal functionalities of the RedditImageDownload class, such as retrieving Reddit instances, creating directories, fetching posts, and downloading images.
 
-## TODO
+## Pre-commit
 
+To use [`pre-commit`](https://pre-commit.com) during the development run:
 
+```sh
+python3 -m venv .vev
+source .venv/bin/activate
+pip install pre-commit
+pre-commit install
+```
 
-
-
-
+`.pre-commit-config.yaml` stores the `pre-commit` configuration.
