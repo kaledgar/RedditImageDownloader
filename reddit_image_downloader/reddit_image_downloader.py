@@ -1,16 +1,18 @@
-import pandas as pd
 import json
-import praw
-import requests
 import os
 from datetime import datetime
+
+import pandas as pd
+import praw
+import requests
 ## add error handling!!!!!!!
 from prawcore.exceptions import Forbidden
-from .logger_config import logger
-from .constants import *
+
+from . import logger
+from .constants import DEFAULT_CREDENTIALS_FILEPATH
 
 
-class RedditImageDownload:
+class RedditImageDownloader:
     def __init__(self, user_name, credentials_filepath=DEFAULT_CREDENTIALS_FILEPATH):
         self.user_name = user_name
         self.reddit = self._get_reddit_from_filepath(credentials_filepath)
