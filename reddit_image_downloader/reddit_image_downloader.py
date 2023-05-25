@@ -10,7 +10,7 @@ from .logger_config import logger
 from .constants import *
 
 
-class RedditImageDownload:
+class RedditImageDownloader:
     def __init__(self, user_name, credentials_filepath=DEFAULT_CREDENTIALS_FILEPATH):
         self.user_name = user_name
         self.reddit = self._get_reddit_from_filepath(credentials_filepath)

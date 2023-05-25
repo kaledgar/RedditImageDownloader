@@ -1,12 +1,11 @@
-from .image_downloader_module import *
+from .constants import DEFAULT_USER_NAMES
+from .reddit_image_downloader import RedditImageDownloader
 
-#test for multiple media in one submission
-#name1 = 'vegetaaaa88'
-name = 'YuzuPyon'
 
-rid = RedditImageDownload(name)
-df = rid._get_posts()
-df1 = rid.classify_urls(df)
+for name in DEFAULT_USER_NAMES:
+    rid = RedditImageDownloader(name)
+    df = rid._get_posts()
+    df1 = rid.classify_urls(df)
 
 print(df1.to_string())
 
