@@ -16,7 +16,8 @@ class RedditImageDownload:
         self.reddit = self._get_reddit_from_filepath(credentials_filepath)
         self.user = self.reddit.redditor(self.user_name)
 
-    def _get_reddit_from_filepath(self, credentials_filepath):
+    @staticmethod
+    def _get_reddit_from_filepath(credentials_filepath):
         with open(credentials_filepath, "r") as file:
             credentials = json.load(file)
         return praw.Reddit(
@@ -58,32 +59,18 @@ class RedditImageDownload:
     def _get_posts_from_profile(self, posts_count=POST_COUNT):
         profile = self.user.subreddit.display_name
         subreddit = self.reddit.subreddit(profile)
-        post_info = [
-            (
-                subm.id,
-                str(subm.url),
-                str(subm.title),
-                int(subm.created_utc),
-                subm.subreddit,
-            )
-            for subm in subreddit.top(limit=posts_count)
-        ]
-        df = pd.DataFrame(
-            post_info,
-            columns=[
-                "id",
-                "url",
-                "title",
-                "created_utc",
-                "subreddit",
-            ],
-        )
+        post_info = [(subm.id,str(subm.url),str(subm.title),int(subm.created_utc),subm.subreddit,)
+            for subm in subreddit.top(limit=posts_count)]
+
+        df = pd.DataFrame(post_info, columns=["id","url","title","created_utc"])
         return df
 
     def classify_urls(self, df):
         df['type'] = df['url'].apply(
-            lambda x: 'image'if 'i.redd.it' in x
+            lambda x: 'image' if 'i.redd.it' in x
+            else 'image' if 'i.imgur' in x
             else 'gallery' if 'reddit.com/gallery' in x
+            else 'video' if 'v.redd.it' in x
             else 'unknown')
         return df
 
