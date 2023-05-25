@@ -1,7 +1,6 @@
 from .constants import DEFAULT_USER_NAMES
 from .reddit_image_downloader import RedditImageDownloader
 
-
 for name in DEFAULT_USER_NAMES:
     rid = RedditImageDownloader(name)
     df = rid._get_posts()
