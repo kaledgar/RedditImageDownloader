@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from datetime import datetime
 
@@ -9,8 +10,9 @@ import requests
 ## add error handling!!!!!!!
 from prawcore.exceptions import Forbidden
 
-from . import logger
-from .constants import DEFAULT_CREDENTIALS_FILEPATH
+from .constants import DEFAULT_CREDENTIALS_FILEPATH, DEFAULT_POST_COUNT
+
+logger = logging.getLogger(__name__)
 
 
 class RedditImageDownloader:
@@ -59,7 +61,7 @@ class RedditImageDownloader:
         logger.debug(f"{self.user_name} posts: {df}")
         return df
 
-    def _get_posts_from_profile(self, posts_count=POST_COUNT):
+    def _get_posts_from_profile(self, posts_count=DEFAULT_POST_COUNT):
         profile = self.user.subreddit.display_name
         subreddit = self.reddit.subreddit(profile)
         post_info = [
