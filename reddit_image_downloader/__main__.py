@@ -12,4 +12,4 @@ for name in DEFAULT_USER_NAMES:
 
 print(df1.to_string())
 
-rid.get_images(name_by='id')
+rid.get_images(name_by="id")
