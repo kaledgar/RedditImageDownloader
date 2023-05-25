@@ -6,8 +6,8 @@ import os
 from datetime import datetime
 ## add error handling!!!!!!!
 from prawcore.exceptions import Forbidden
-from logger_config import logger
-from constants import *
+from .logger_config import logger
+from .constants import *
 
 
 class RedditImageDownload:

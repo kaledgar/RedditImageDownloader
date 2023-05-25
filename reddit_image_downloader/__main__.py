@@ -1,4 +1,4 @@
-from image_downloader_module import *
+from .image_downloader_module import *
 
 #test for multiple media in one submission
 #name1 = 'vegetaaaa88'
