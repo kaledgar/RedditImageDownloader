@@ -5,13 +5,11 @@ from datetime import datetime
 import pandas as pd
 import praw
 import requests
-from constants import *
-from logger_config import logger
 ## add error handling!!!!!!!
 from prawcore.exceptions import Forbidden
 
+from . import logger
 from .constants import DEFAULT_CREDENTIALS_FILEPATH
-from .logger_config import logger
 
 
 class RedditImageDownloader:
