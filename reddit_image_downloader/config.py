@@ -1,5 +1,5 @@
 import argparse
-
+from .constants import DEFAULT_USER_NAMES
 
 def get_config_from_cli():
     parser = argparse.ArgumentParser()
@@ -11,5 +11,26 @@ def get_config_from_cli():
         Give more output (corresponding to DEBUG logging level).
         """,
     )
+
+    parser.add_argument(
+        "-u",
+        "--users",
+        type = str,
+        default = DEFAULT_USER_NAMES,
+        nargs = "+",
+        help = """Give list of users"""
+    )
+
+    parser.add_argument(
+        "-n",
+        "--naming",
+        type = str,
+        choices = ['created_utc', 'id'],
+        default='created_utc',
+        help="""
+        Pass naming convention of downloaded media files. You can choose: 
+        id.format or created_utc.format (default)"""
+    )
+
     cli_args = parser.parse_args()
     return cli_args

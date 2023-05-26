@@ -90,6 +90,7 @@ class RedditImageDownloader:
             if "v.redd.it" in x
             else "unknown"
         )
+        logger.info(df)
         return df
 
     def download_image_from_url(self, url, name, format):
