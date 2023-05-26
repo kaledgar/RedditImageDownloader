@@ -21,9 +21,11 @@ To use the "Reddit Image Downloader" project, follow these steps:
 
  - Customize the constants.py file if needed, adjusting default file paths or other constants according to your preferences.
 
-- Initialize an object from the RedditImageDownload class in the __main__.py file, providing the Reddit username and the path to the credentials JSON file.
+- Start scrapping with:
 
- - Run the __main__.py file to execute the image downloading process.
+```sh
+python3 -m reddit_image_downloader -u [requested_reddit_username]
+```
 
 ## Usage
 The RedditImageDownload class provides the following methods:
