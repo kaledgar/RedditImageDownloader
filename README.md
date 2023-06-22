@@ -14,7 +14,7 @@ praw~=7.7.0
 requests~=2.31.0
 ```
 
- - Create a [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file.
+ - Create a [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `user_credentials.json`
 
 ```json
 {
