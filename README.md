@@ -43,7 +43,7 @@ To use the "Reddit Image Downloader", follow these steps:
  - Install the required dependencies:
 ```sh
 pip install -r requirements.txt 
-python3 -m reddit_image_downloader -u ["your", "users", "list"]
+python3 -m reddit_image_downloader -u "your", "users", "list"
 ```
 
 The last command runs the script and downloads media from users given in list and saves it in separate directories.
