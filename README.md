@@ -3,19 +3,25 @@ The "Reddit Image Downloader" is a Python application that allows users to downl
 
 # How tu run
 
-Preliminary
+## Preliminary
 
-- Create a [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `user_credentials.json`
+- clone the repository
+```shell
+git clone https://github.com/kkinastowski66/reddit-image-download.git
+```
+- Create [`authorized reddit application`](https://www.reddit.com/prefs/apps), read about [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `user_credentials.json`
 
 ```json
 {
-"username":"...",
-"password":"...",
-"user_agent":"...",
+"username":"your reddit username",
+"password":"pw to your reddit account",
+"user_agent":"anything here",
 "client_secret":"...",
 "client_id":"..."
 }
 ```
+
+![image](https://github.com/kkinastowski66/reddit-image-download/assets/101144906/1b76c851-373d-4065-9ffe-f20e86c30a17)
 
 ## Using Docker (Recommended)
 To use the "Reddit Image Downloader", follow these steps:
@@ -47,7 +53,7 @@ requests~=2.31.0
  - Start scrapping with:
 
 ```sh
-python3 -m reddit_image_downloader -u [requested_reddit_usernames_list]
+python3 -m reddit_image_downloader -u ["your", "users", "list"]
 ```
 
 The following command runs the script and downloads media from users given in list and saves it in separate directories.
