@@ -6,6 +6,7 @@
 *.webm
 *.mp4
 *.avi
+downloads/
 user_credentials.json
 
 # Byte-compiled / optimized / DLL files
