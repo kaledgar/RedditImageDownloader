@@ -38,25 +38,15 @@ docker build -t reddit-image-downloader .
 ## Standard method
 
 To use the "Reddit Image Downloader", follow these steps:
- - Clone the repository.
+ - Clone the repository
+ - Customize the constants.py file if needed, adjusting default file paths or other constants according to your preferences.
  - Install the required dependencies:
 ```sh
-pandas~=2.0.1
-praw~=7.7.0
-requests~=2.31.0
-```
-
-
-
- - Customize the constants.py file if needed, adjusting default file paths or other constants according to your preferences.
- 
- - Start scrapping with:
-
-```sh
+pip install -r requirements.txt 
 python3 -m reddit_image_downloader -u ["your", "users", "list"]
 ```
 
-The following command runs the script and downloads media from users given in list and saves it in separate directories.
+The last command runs the script and downloads media from users given in list and saves it in separate directories.
 
 ## Pre-commit
 
