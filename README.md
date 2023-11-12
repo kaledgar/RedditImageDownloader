@@ -1,7 +1,7 @@
 # Reddit Image Downloader
 The "Reddit Image Downloader" is a Python application that allows users to download images from a Reddit user's submissions. It utilizes the Reddit API and [`PRAW`](https://praw.readthedocs.io/en/stable/getting_started/quick_start.html) library to fetch post information and download the corresponding images.
 
-## Getting Started
+## How tu run
 To use the "Reddit Image Downloader", follow these steps:
 
  - Clone the repository.
