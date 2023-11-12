@@ -1,20 +1,11 @@
 # Reddit Image Downloader
 The "Reddit Image Downloader" is a Python application that allows users to download images from a Reddit user's submissions. It utilizes the Reddit API and [`PRAW`](https://praw.readthedocs.io/en/stable/getting_started/quick_start.html) library to fetch post information and download the corresponding images.
 
-## How tu run
-To use the "Reddit Image Downloader", follow these steps:
+# How tu run
 
- - Clone the repository.
+Preliminary
 
- - Install the required dependencies:
-
-```sh
-pandas~=2.0.1
-praw~=7.7.0
-requests~=2.31.0
-```
-
- - Create a [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `user_credentials.json`
+- Create a [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `user_credentials.json`
 
 ```json
 {
@@ -24,8 +15,32 @@ requests~=2.31.0
 "client_secret":"...",
 "client_id":"..."
 }
-
 ```
+
+## Using Docker (Recommended)
+To use the "Reddit Image Downloader", follow these steps:
+ - Clone the repository.
+ - Adjust the Dockerfile upt to your preferences 
+ ```shell
+ # build docker image 
+docker build -t reddit-image-downloader .
+
+# run
+ docker run -v /your/local/directory:/app/downloads reddit-image-downloader
+ ```
+
+## Standard method
+
+To use the "Reddit Image Downloader", follow these steps:
+ - Clone the repository.
+ - Install the required dependencies:
+```sh
+pandas~=2.0.1
+praw~=7.7.0
+requests~=2.31.0
+```
+
+
 
  - Customize the constants.py file if needed, adjusting default file paths or other constants according to your preferences.
  
