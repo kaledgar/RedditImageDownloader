@@ -6,6 +6,7 @@ from typing import Optional, List, Tuple
 import pandas as pd
 import praw
 import requests
+from tqdm import tqdm
 
 from prawcore.exceptions import Forbidden
 
@@ -93,7 +94,7 @@ class RedditImageDownloader:
             logger.error(f"Submission with ID {gallery_id} was removed.")
             return None
         else:
-            logger.info(f"Submission with ID {gallery_id} is UP.")
+            logger.debug(f"Submission with ID {gallery_id} is UP.")
             return post
 
     def _get_posts(self, posts_count: int = None) -> pd.DataFrame:
@@ -179,9 +180,11 @@ class RedditImageDownloader:
         try:
             df = self._get_posts()
             df_classified = self.classify_urls(df)
-            logger.info(df_classified)
+            logger.debug(df_classified)
 
-            for i, url in enumerate(df_classified["url"]):
+            for i, url in tqdm(
+                enumerate(df_classified["url"]), total=len(df_classified)
+            ):
                 if name_by == "id":
                     name_i = df_classified["id"][i]
                 elif name_by == "created_utc":
