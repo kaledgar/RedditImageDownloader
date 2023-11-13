@@ -1,10 +1,3 @@
-"""
-https://gist.github.com/tfeldmann/fc875e6630d11f2256e746f67a09c1ae
-Fast duplicate file finder.
-Usage: duplicates.py <folder> [<folder>...]
-Based on https://stackoverflow.com/a/36113168/300783
-Modified for Python3 with some small code improvements.
-"""
 import os
 import sys
 import hashlib
@@ -18,7 +11,13 @@ logger = logging.getLogger(__name__)
 
 class ImageDuplicateRemoval:
     """
-    Simple class to remove non unique files in a given directory
+    The following non-unique files removal alghoritm is based
+    on work and contribution from:
+    - https://stackoverflow.com/a/36113168/300783
+    - https://gist.github.com/tfeldmann/fc875e6630d11f2256e746f67a09c1ae
+
+    This file encapsulates the whole logic in ImageDuplicateRemoval class,
+    that is performs removal of non-unique files on the initialization step.
     """
 
     def __init__(self, paths: list, username: str):
@@ -101,7 +100,7 @@ class ImageDuplicateRemoval:
             duplicate_files_list.append(path.split(self.username + "/", 1)[1])
         return duplicate_files_list
 
-    def execute(self):
+    def execute(self) -> None:
         if os.getcwd() not in self.paths:
             os.chdir(self.paths[0])
         logger.debug(os.getcwd())
