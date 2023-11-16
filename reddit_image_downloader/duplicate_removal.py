@@ -98,6 +98,7 @@ class ImageDuplicateRemoval:
         duplicate_files_list = []
         for path in self.duplicate_paths:
             duplicate_files_list.append(path.split(self.username + "/", 1)[1])
+        print(duplicate_files_list)
         return duplicate_files_list
 
     def execute(self) -> None:
@@ -107,4 +108,4 @@ class ImageDuplicateRemoval:
         for file in self.duplicate_files_list:
             pathlib.Path(file).unlink(missing_ok=True)
 
-        logger.info(f"""{len(self.duplicate_files_list)} non-unique files removed""")
+        print(f"""{len(self.duplicate_files_list)} non-unique files removed""")
