@@ -22,9 +22,8 @@ git clone https://github.com/kkinastowski66/reddit-image-download.git
 ```
 
 
-## Using Docker (Recommended)
+## Using Docker
 To use the "Reddit Image Downloader", follow these steps:
- - Clone the repository.
  - Adjust the Dockerfile up to your preferences 
  ```shell
  # build docker image 
@@ -34,9 +33,6 @@ docker build -t reddit-image-downloader .
  ```
 
 ## Standard method
-
-To use the "Reddit Image Downloader", follow these steps:
- - Clone the repository
  - Customize the constants.py file if needed, adjusting default file paths or other constants according to your preferences.
  - Install the required dependencies:
 ```sh
