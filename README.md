@@ -9,7 +9,7 @@ This tool leverages the Reddit API and the PRAW library to seamlessly fetch post
 
 - clone the repository
 ```shell
-git clone https://github.com/kkinastowski66/reddit-image-download.git
+git clone https://github.com/kkinastowski66/RedditImageDownloader
 ```
 - Create [`authorized reddit application`](https://www.reddit.com/prefs/apps), read about [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `user_credentials.json` in your local repository that you cloned.
 
