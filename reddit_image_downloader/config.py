@@ -1,5 +1,5 @@
 import argparse
-from .constants import DEFAULT_USER_NAMES
+from .constants import DEFAULT_USER_NAMES, DEFAULT_DOWNLOADS_PATH
 
 
 def get_config_from_cli():
@@ -41,6 +41,14 @@ def get_config_from_cli():
         choices=[True, False],
         default=True,
         help="False - delete duplicates, True - leave duplicates",
+    )
+
+    parser.add_argument(
+        "-d",
+        "--directory",
+        type=str,
+        default=DEFAULT_DOWNLOADS_PATH,
+        help="Directory where files will be downloaded",
     )
 
     cli_args = parser.parse_args()

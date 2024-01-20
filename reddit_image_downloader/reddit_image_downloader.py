@@ -220,12 +220,13 @@ class RedditImageDownloader:
                         filepath=f"{parent_download_directory}/images/{name_i}",
                         format=DEFAULT_IMAGE_FORMAT,
                     )
+                elif df_classified["type"][i] == "?":
+                    pass
                 else:
                     self.download_image_from_url(
                         url=url,
                         filepath=f"{parent_download_directory}/{format_mapping[df_classified['type'][i]]}/{name_i}",
                         format=url.split(".")[-1],
                     )
-
         except Exception as e:
             logger.error(f"An error occurred while getting images: {e}")

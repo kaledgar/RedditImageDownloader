@@ -1,5 +1,7 @@
-# Reddit Image Downloader
-The "Reddit Image Downloader" is a Python application that allows users to download images from a Reddit user's submissions. It utilizes the Reddit API and [`PRAW`](https://praw.readthedocs.io/en/stable/getting_started/quick_start.html) library to fetch post information and download the corresponding images.
+# ArtSnap - Reddit Media Downloading Automator 🎨📸
+Welcome to ArtSnap, a simple Python wraper for effortlessly batch downloading media from Reddit! 🌟 
+
+This tool leverages the Reddit API and the PRAW library to seamlessly fetch post information and download the corresponding images.
 
 # How tu run
 
@@ -22,9 +24,8 @@ git clone https://github.com/kkinastowski66/reddit-image-download.git
 ```
 
 
-## Using Docker (Recommended)
+## Using Docker
 To use the "Reddit Image Downloader", follow these steps:
- - Clone the repository.
  - Adjust the Dockerfile up to your preferences 
  ```shell
  # build docker image 
@@ -34,9 +35,6 @@ docker build -t reddit-image-downloader .
  ```
 
 ## Standard method
-
-To use the "Reddit Image Downloader", follow these steps:
- - Clone the repository
  - Customize the constants.py file if needed, adjusting default file paths or other constants according to your preferences.
  - Install the required dependencies:
 ```sh
