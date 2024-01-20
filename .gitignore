@@ -1,4 +1,5 @@
 # Project specific
+*.json
 *.jpg
 *.jpeg
 *.png
@@ -7,7 +8,7 @@
 *.mp4
 *.avi
 downloads/
-user_credentials.json
+credentials.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -14,6 +14,7 @@ from .constants import (
     DEFAULT_CREDENTIALS_FILEPATH,
     DEFAULT_DOWNLOADS_PATH,
     DEFAULT_IMAGE_FORMAT,
+    DEFAULT_MOVIE_FORMAT,
 )
 
 logger = logging.getLogger(__name__)
@@ -116,28 +117,41 @@ class RedditImageDownloader:
         return df
 
     def classify_urls(self, df):
-        """_summary_
-
+        """Applies mapping to metdata:
+        - "i" - Image,
+        - "g" - Gallery,
+        - "v" - Video,
+        - "?" - Unknown source
         Args:
             df (pd.DataFrame): classify URLs in metadata df
+
 
         Returns:
             df : dataframe with metadata
         """
         df["type"] = df["url"].apply(
-            lambda x: "image"
+            lambda x: "i"
+            if any(ext in x.lower() for ext in [".jpg", ".png", ".jpeg"])
+            else "gif"
+            if x.lower().endswith(".gif")
+            else "i"
             if "i.redd.it" in x
-            else "image"
+            else "i"
             if "i.imgur" in x
-            else "gallery"
+            else "g"
             if "reddit.com/gallery" in x
-            else "video"
+            else "v"
             if "v.redd.it" in x
-            else "unknown"
+            else "?"
         )
         return df
 
-    def download_image_from_url(self, url: str, filepath: str, format: str) -> None:
+    def download_image_from_url(
+        self, url: str, filepath: str, format: str = "DEFAULT_IMAGE_FORMAT"
+    ) -> None:
+        # Create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
         response = requests.get(url)
         with open(f"{filepath}.{format}", "wb") as file:
             file.write(response.content)
@@ -177,10 +191,16 @@ class RedditImageDownloader:
         Args:
             name_by (str, optional): _description_. Defaults to "id".
         """
+
+        format_mapping = {
+            "i": "images",
+            "gif": "gifs",
+            "v": "videos",
+        }
+
         try:
-            df = self._get_posts()
-            df_classified = self.classify_urls(df)
-            logger.debug(df_classified)
+            df_classified = self.classify_urls(self._get_posts())
+            logger.info(df_classified.to_string())
 
             for i, url in tqdm(
                 enumerate(df_classified["url"]), total=len(df_classified)
@@ -191,19 +211,22 @@ class RedditImageDownloader:
                     name_i = datetime.utcfromtimestamp(
                         df_classified["created_utc"][i]
                     ).strftime("%Y-%m-%d--%H-%M-%S")
+                parent_download_directory = f"{self.user_path}"
 
-                filepath = f"{self.user_path}/{name_i}"
-                if df_classified["type"][i] == "image":
-                    self.download_image_from_url(
-                        url=url, filepath=filepath, format=DEFAULT_IMAGE_FORMAT
-                    )
-                elif df_classified["type"][i] == "gallery":
+                if df_classified["type"][i] == "g":
+                    # images in gallery
                     self.download_image_from_gallery(
                         gallery_id=df_classified["id"][i],
-                        filepath=filepath,
+                        filepath=f"{parent_download_directory}/images/{name_i}",
                         format=DEFAULT_IMAGE_FORMAT,
                     )
-                elif df_classified["type"][i] == "unknown":
+                elif df_classified["type"][i] == "?":
                     pass
+                else:
+                    self.download_image_from_url(
+                        url=url,
+                        filepath=f"{parent_download_directory}/{format_mapping[df_classified['type'][i]]}/{name_i}",
+                        format=url.split(".")[-1],
+                    )
         except Exception as e:
             logger.error(f"An error occurred while getting images: {e}")
