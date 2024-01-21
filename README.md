@@ -1,5 +1,6 @@
-# ArtSnap - Reddit Media Downloading Automator 🎨📸
-Welcome to ArtSnap, a simple Python wraper for effortlessly batch downloading media from Reddit! 🌟 
+# RedditImageDownloader 🎨📸
+
+Welcome to RedditImageDownloader, a simple Python module for effortlessly batch downloading media from Reddit! 🌟
 
 This tool leverages the Reddit API and the PRAW library to seamlessly fetch post information and download the corresponding images.
 
