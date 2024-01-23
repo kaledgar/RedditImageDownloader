@@ -6,8 +6,11 @@ from typing import Optional, List, Tuple
 import pandas as pd
 import praw
 import requests
-from tqdm import tqdm
 
+import asyncio
+import aiohttp
+
+from tqdm import tqdm
 from prawcore.exceptions import Forbidden
 
 from .constants import (
@@ -146,19 +149,18 @@ class RedditImageDownloader:
         )
         return df
 
-    def download_image_from_url(
-        self, url: str, filepath: str, format: str = "DEFAULT_IMAGE_FORMAT"
+    async def _download_image_from_url_async(
+        self, session, url: str, filepath: str, format: str
     ) -> None:
-        # Create the directory if it doesn't exist
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        async with session.get(url) as response:
+            content = await response.read()
+            with open(f"{filepath}.{format}", "wb") as file:
+                file.write(content)
 
-        response = requests.get(url)
-        with open(f"{filepath}.{format}", "wb") as file:
-            file.write(response.content)
-
-    def download_image_from_gallery(
-        self, gallery_id: str, filepath: str, format: str
-    ) -> list:
+    async def _download_image_from_gallery_async(
+        self, session, gallery_id: str, filepath: str, format: str
+    ) -> List[str]:
         try:
             post = self._check_none_type_submission(gallery_id)
             if post is not None:
@@ -168,11 +170,17 @@ class RedditImageDownloader:
                         for i in post.media_metadata.items()
                     ]
 
-                    for i, url in enumerate(url_gallery_list):
-                        response = requests.get(url)
-                        with open(f"{filepath}-.{format}", "wb") as file:
-                            file.write(response.content)
+                    tasks = [
+                        self._download_image_from_url_async(
+                            session,
+                            url,
+                            f"{filepath}-.{format}",
+                            DEFAULT_IMAGE_FORMAT,
+                        )
+                        for url in url_gallery_list
+                    ]
 
+                    await asyncio.gather(*tasks)
                     return url_gallery_list
                 else:
                     logger.error(
@@ -185,13 +193,7 @@ class RedditImageDownloader:
                 f"An error occurred while downloading images from gallery: {e}"
             )
 
-    def get_images(self, name_by: str) -> None:
-        """Saves images into the specified direcotry
-
-        Args:
-            name_by (str, optional): _description_. Defaults to "id".
-        """
-
+    async def get_images_async(self, name_by: str) -> None:
         format_mapping = {
             "i": "images",
             "gif": "gifs",
@@ -202,31 +204,39 @@ class RedditImageDownloader:
             df_classified = self.classify_urls(self._get_posts())
             logger.info(df_classified.to_string())
 
-            for i, url in tqdm(
-                enumerate(df_classified["url"]), total=len(df_classified)
-            ):
-                if name_by == "id":
-                    name_i = df_classified["id"][i]
-                elif name_by == "created_utc":
-                    name_i = datetime.utcfromtimestamp(
-                        df_classified["created_utc"][i]
-                    ).strftime("%Y-%m-%d--%H-%M-%S")
-                parent_download_directory = f"{self.user_path}"
+            async with aiohttp.ClientSession() as session:
+                tasks = []
+                for i, url in enumerate(df_classified["url"]):
+                    if name_by == "id":
+                        name_i = df_classified["id"][i]
+                    elif name_by == "created_utc":
+                        name_i = datetime.utcfromtimestamp(
+                            df_classified["created_utc"][i]
+                        ).strftime("%Y-%m-%d--%H-%M-%S")
+                    parent_download_directory = f"{self.user_path}"
 
-                if df_classified["type"][i] == "g":
-                    # images in gallery
-                    self.download_image_from_gallery(
-                        gallery_id=df_classified["id"][i],
-                        filepath=f"{parent_download_directory}/images/{name_i}",
-                        format=DEFAULT_IMAGE_FORMAT,
-                    )
-                elif df_classified["type"][i] == "?":
-                    pass
-                else:
-                    self.download_image_from_url(
-                        url=url,
-                        filepath=f"{parent_download_directory}/{format_mapping[df_classified['type'][i]]}/{name_i}",
-                        format=url.split(".")[-1],
-                    )
+                    if df_classified["type"][i] == "g":
+                        tasks.append(
+                            self._download_image_from_gallery_async(
+                                session,
+                                gallery_id=df_classified["id"][i],
+                                filepath=f"{parent_download_directory}/images/{name_i}",
+                                format=DEFAULT_IMAGE_FORMAT,
+                            )
+                        )
+                    elif df_classified["type"][i] == "?":
+                        pass
+                    else:
+                        tasks.append(
+                            self._download_image_from_url_async(
+                                session,
+                                url,
+                                f"{parent_download_directory}/{format_mapping[df_classified['type'][i]]}/{name_i}",
+                                format=url.split(".")[-1],
+                            )
+                        )
+
+                await asyncio.gather(*tasks)
+
         except Exception as e:
             logger.error(f"An error occurred while getting images: {e}")
