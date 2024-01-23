@@ -2,15 +2,15 @@
 
 Welcome to RedditImageDownloader, a simple Python module for effortlessly batch downloading media from Reddit! 🌟
 
-This tool leverages the Reddit API and the PRAW library to seamlessly fetch post information and download the corresponding images.
+This tool leverages the Reddit API and the PRAW library to seamlessly fetch post information and download the corresponding images in async/await method.
 
-# How tu run
+# Usage
 
 ## Preliminary
 
 - clone the repository
 ```shell
-git clone https://github.com/kkinastowski66/RedditImageDownloader
+git clone https://github.com/kaledgar/RedditImageDownloader
 ```
 - Create [`authorized reddit application`](https://www.reddit.com/prefs/apps), read about [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `user_credentials.json` in your local repository that you cloned.
 
@@ -24,9 +24,26 @@ git clone https://github.com/kkinastowski66/RedditImageDownloader
 }
 ```
 
+## Run the script
 
-## Using Docker
-To use the "Reddit Image Downloader", follow these steps:
+ - Customize the constants.py file if needed, adjusting default file paths or other constants according to your preferences.
+ - Install the required dependencies:
+
+```sh
+# Install requirements
+pip install -r requirements.txt 
+
+# Check possible cli arguments
+python3 -m reddit_image_downloader -h
+
+# Run module with your custom arguments
+python3 -m reddit_image_downloader -u example_user -d 'mnt/d/Downloads'
+```
+
+The last command runs the script and downloads media from users given in list and saves it in separate directories.
+
+### Run with Docker
+To use the "Reddit Image Downloader" with Docker, follow these steps:
  - Adjust the Dockerfile up to your preferences 
  ```shell
  # build docker image 
@@ -34,16 +51,6 @@ docker build -t reddit-image-downloader .
 # run
  docker run -v /your/local/directory:/app/downloads reddit-image-downloader
  ```
-
-## Standard method
- - Customize the constants.py file if needed, adjusting default file paths or other constants according to your preferences.
- - Install the required dependencies:
-```sh
-pip install -r requirements.txt 
-python3 -m reddit_image_downloader -u "user1" "user2" "user3"
-```
-
-The last command runs the script and downloads media from users given in list and saves it in separate directories.
 
 ## Pre-commit
 
