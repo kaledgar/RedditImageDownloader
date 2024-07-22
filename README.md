@@ -12,15 +12,15 @@ This tool leverages the Reddit API and the PRAW library to seamlessly fetch post
 ```shell
 git clone https://github.com/kaledgar/RedditImageDownloader
 ```
-- Create [`authorized reddit application`](https://www.reddit.com/prefs/apps), read about [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `user_credentials.json` in your local repository that you cloned.
+- Create [`authorized reddit application`](https://www.reddit.com/prefs/apps), read about [`Reddit API`](https://www.reddit.com/dev/api/) and obtain the necessary credentials, such as the client ID, client secret, username, password, and user agent. Store these credentials in a JSON file `credentials.json` in your local repository that you cloned.
 
 ```json
 {
-"username":"your reddit username",
-"password":"pw to your reddit account",
-"user_agent":"anything here",
-"client_secret":"...",
-"client_id":"..."
+    "username": "your reddit username",
+    "password": "pw to your reddit account",
+    "user_agent": "anything here",
+    "client_secret": "client secret of reddit app you create",
+    "client_id": "app id, see below for details"
 }
 ```
 
@@ -71,7 +71,7 @@ pre-commit install
 
 In [`authorized reddit application`](https://www.reddit.com/prefs/apps) settings:
 
-![image](https://github.com/kkinastowski66/reddit-image-download/assets/101144906/1b76c851-373d-4065-9ffe-f20e86c30a17)
+![image](https://github.com/user-attachments/assets/765b4371-371b-4c70-ad25-3f49cd8eb411)
 
 ### No permissions error
 

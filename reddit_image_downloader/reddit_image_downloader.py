@@ -14,7 +14,7 @@ from tqdm import tqdm
 from prawcore.exceptions import Forbidden
 
 from .constants import (
-    DEFAULT_CREDENTIALS_FILEPATH,
+    DEFAULT_CREDENTIALS_FILENAME,
     DEFAULT_DOWNLOADS_PATH,
     DEFAULT_IMAGE_FORMAT,
     DEFAULT_MOVIE_FORMAT,
@@ -27,7 +27,7 @@ class RedditImageDownloader:
     def __init__(
         self,
         user_name: str,
-        credentials_filepath: str = DEFAULT_CREDENTIALS_FILEPATH,
+        credentials_filepath: str = DEFAULT_CREDENTIALS_FILENAME,
         downloads_path: str = DEFAULT_DOWNLOADS_PATH,
     ) -> None:
         """
@@ -36,7 +36,7 @@ class RedditImageDownloader:
 
         Args:
             user_name (str): Reddit username.
-            credentials_filepath (str, optional): Path to the credentials file. Defaults to DEFAULT_CREDENTIALS_FILEPATH.
+            credentials_filepath (str, optional): Path to the credentials file. Defaults to DEFAULT_CREDENTIALS_FILENAME.
             downloads_path (str, optional) : Parent directory where images will be downloaded
         """
         self.user_name = user_name
