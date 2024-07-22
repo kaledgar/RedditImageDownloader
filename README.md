@@ -2,7 +2,7 @@
 
 Welcome to RedditImageDownloader, a simple Python module for effortlessly batch downloading media from Reddit! 🌟
 
-This tool leverages the Reddit API and the PRAW library to seamlessly fetch post information and download the corresponding images in async/await method.
+This tool leverages the Reddit API and the PRAW library to seamlessly fetch post information and download the corresponding images in async/await method. The script uses built-in md5-based duplicate removal for initial data cleaning purpose to avoid downloading the same image that was posted to multiple subreddits.
 
 # Usage
 
@@ -33,7 +33,7 @@ git clone https://github.com/kaledgar/RedditImageDownloader
 # Install requirements
 pip install -r requirements.txt 
 
-# Check possible cli arguments
+# Check possible arguments
 python3 -m reddit_image_downloader -h
 
 # Run module with your custom arguments

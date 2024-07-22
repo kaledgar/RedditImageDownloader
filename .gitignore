@@ -8,7 +8,6 @@
 *.mp4
 *.avi
 downloads/
-*venv/*
 credentials.json
 
 # Byte-compiled / optimized / DLL files
