@@ -9,13 +9,13 @@ class FileDuplicateRemover:
         self.directory_path = Path(directory_path)
         self.logger = self._setup_logger()
 
-        self.logger.info(f"Searching {directory_path} for non-unique files ... \n")
+        self.logger.debug(f"Searching {directory_path} for non-unique files ... \n")
         self._remove_duplicates()
 
     @staticmethod
     def _setup_logger():
         logger = logging.getLogger("FileDuplicateRemover")
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.debug)
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
         ch = logging.StreamHandler()
@@ -24,13 +24,18 @@ class FileDuplicateRemover:
 
         return logger
 
-    @staticmethod
-    def calculate_hash(file_path: Path) -> str:
+    def calculate_hash(self, file_path: Path) -> str:
+        self.logger.debug(f"Calculating hash for {file_path} ...")
+        hash_obj = hashlib.sha256()
         try:
             with file_path.open("rb") as f:
-                return hashlib.md5(f.read()).hexdigest()
+                while chunk := f.read(8192):
+                    hash_obj.update(chunk)
+            file_hash = hash_obj.hexdigest()
+            self.logger.debug(f"Hash for {file_path}: {file_hash}")
+            return file_hash
         except Exception as e:
-            logging.error(f"Error calculating hash for {file_path}: {e}")
+            self.logger.error(f"Error calculating hash for {file_path}: {e}")
             return ""
 
     def _remove_duplicates(self) -> None:
@@ -41,19 +46,17 @@ class FileDuplicateRemover:
             for dirpath, _, filenames in os.walk(self.directory_path):
                 for filename in filenames:
                     file_path = Path(dirpath) / filename
+                    self.logger.debug(f"Processing file: {file_path}")
+                    file_hash = self.calculate_hash(file_path)
+                    if not file_hash:
+                        continue
 
-                    if file_path.is_file():
-                        file_hash = self.calculate_hash(file_path)
-
-                        if not file_hash:
-                            continue
-
-                        if file_hash not in unique_hashes:
-                            unique_hashes.add(file_hash)
-                        else:
-                            self.logger.info(f"Deleting duplicate file: {file_path}")
-                            file_path.unlink()
-                            count += 1
+                    if file_hash not in unique_hashes:
+                        unique_hashes.add(file_hash)
+                    else:
+                        self.logger.debug(f"Deleting duplicate file: {file_path}")
+                        file_path.unlink()
+                        count += 1
 
             self.logger.info(
                 f"{count} non-unique files removed from {self.directory_path}"

@@ -35,12 +35,10 @@ def get_config_from_cli():
     )
 
     parser.add_argument(
-        "-r",
+        "-rd",
         "--remove_duplicates",
-        type=bool,
-        choices=[True, False],
-        default=True,
-        help="False - delete duplicates, True - leave duplicates",
+        action="store_true",
+        help="This flag removes the duplicates",
     )
 
     parser.add_argument(

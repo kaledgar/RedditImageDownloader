@@ -37,7 +37,7 @@ pip install -r requirements.txt
 python3 -m reddit_image_downloader -h
 
 # Run module with your custom arguments
-python3 -m reddit_image_downloader -u example_user -d 'mnt/d/Downloads'
+python3 -m reddit_image_downloader -u example_user -d 'mnt/d/downloads'
 ```
 
 The last command runs the script and downloads media from users given in list and saves it in separate directories.

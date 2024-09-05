@@ -1,14 +1,17 @@
+import os
 import asyncio
 import logging
 from pprint import pformat
 from pathlib import Path
 from .config import get_config_from_cli
 from .constants import DEFAULT_DOWNLOADS_PATH
-from .reddit_image_downloader import RedditImageDownloader
+
+# from .reddit_image_downloader import RedditImageDownloader
+from .async_reddit_image_downloader import RedditImageDownloader
 from .duplicate_removal import FileDuplicateRemover
 
 
-async def main():
+if __name__ == "__main__":
     config = get_config_from_cli()
 
     # Set up logger
@@ -18,14 +21,12 @@ async def main():
 
     # Download images for each user
     for name in config.users:
-        rid = RedditImageDownloader(name)
-        await rid.get_images_async(name_by=config.naming)
+        rid = RedditImageDownloader(name, submissions_limit=1000, name_by=config.naming)
+        rid.execute()
 
         # Remove duplicate images if configured to do so
-        logger.info(f"Deleting duplicate images in {config.directory}/{name}")
+        logger.info("Deleting duplicate media ...")
         if config.remove_duplicates:
-            FileDuplicateRemover(directory_path=f"{config.directory}/{name}")
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+            FileDuplicateRemover(
+                directory_path=os.path.join(config.directory, name, "images")
+            )
